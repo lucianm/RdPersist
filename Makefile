@@ -9,13 +9,13 @@ all:
 	@echo Nothing to build
 
 install:
-	install -m 755 -o root -g root $(PACKAGE) $(prefix)/bin
+	install -m 755 -o root -g root $(PACKAGE) $(DESTDIR)$(prefix)/bin
 	cp --remove-destination --archive $(PACKAGE).conf $(DESTDIR)/etc
 	mkdir -p $(DOCDIR)
 	cp --recursive --remove-destination --archive AUTHORS HISTORY LICENSE README.md -t $(DOCDIR)
 
 uninstall:
-	rm -f $(prefix)/bin/$(PACKAGE)
+	rm -f $(DESTDIR)$(prefix)/bin/$(PACKAGE)
 	rm -fR $(DOCDIR)
 
 dist:
