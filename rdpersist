@@ -1,0 +1,80 @@
+#!/bin/bash
+
+source /etc/rdpersist.conf
+
+fn_eliminate_linebreaks() {
+	echo ${1}
+}
+
+fn_eval_variables() {
+	eval mountpath='$'{${1}_FSPATH}
+
+	eval storagepath='$'{${1}_PERSIST_STORAGEPATH}
+
+	eval persistsubdirs='$'{${1}_PERSIST_SUBDIRS}
+	persistsubdirs="$(fn_eliminate_linebreaks "${persistsubdirs}")"
+
+	eval createonlydirs='$'{${1}_CREATEONLY_DIRS}
+	createonlydirs="$(fn_eliminate_linebreaks "${createonlydirs}")"
+}
+
+fn_restore_all() {
+	for tmpfsmnt in $PERSISTENT_RAMDISKS; do
+		# evaluate variables for this ramdisk
+		fn_eval_variables ${tmpfsmnt}
+		
+		# mount if not already mounted
+		if [ "$(mount | grep $mountpath)" = "" ]; then
+			echo "   Mounting tmpfs on '$mountpath'"
+			mount -t tmpfs tmpfs -o size=4000M,nr_inodes=2M "$mountpath"
+		fi
+
+		cd $mountpath
+
+		# restore from archive
+		echo "   Decompressing '$storagepath' to '$mountpath'"
+		lzop -dc $storagepath | tar -xvf - > /dev/null
+
+		# create directories
+		for directory in $createonlydirs; do
+			mkdir -p "$mountpath/$directory"
+		done
+	done
+}
+
+fn_persist_all() {
+	for tmpfsmnt in $PERSISTENT_RAMDISKS; do
+		# evaluate variables for this ramdisk
+		fn_eval_variables ${tmpfsmnt}
+
+		# archive
+		if [ "$persistsubdirs" = "" ]; then
+			echo "   Compressing '$mountpath' to '$storagepath'"
+			tar --use-compress-program=lzop -cf $storagepath --one-file-system -C $mountpath .
+		else
+			echo "   Compressing $mountpath/($persistsubdirs) to '$storagepath'"
+			tar --use-compress-program=lzop -cf $storagepath --one-file-system -C $mountpath $persistsubdirs
+		fi
+
+		# unmount if mounted
+		if [ "$(mount | grep $mountpath)" != "" ]; then
+			echo "   Unmounting tmpfs from '$mountpath'"
+			umount "$mountpath"
+		fi
+	done
+}
+
+
+case "${1}" in
+	start)
+		fn_restore_all
+		;;
+	stop)
+		fn_persist_all
+		;;
+	*)
+		echo "Usage: ${0} start|stop"
+		exit 1
+esac
+
+exit 0
