@@ -33,6 +33,7 @@ You may add [this layman overlay](https://github.com/lucianm/gen2ovl-googoo2).
 Installation
 ------------
 
+The runtime dependencies of the script are coreutils, tar (>= 1.20) and lzop (>=1.02).
 Just use the provided Makefile (install, uninstall), for which you can alter the
 environment vars DESTDIR and prefix before calling a Makefile target if you wish.
 
