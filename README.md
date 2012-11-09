@@ -41,8 +41,7 @@ Usage
 -----
 
 This is the output of the CLI help:
-<pre><code>
-Usage: 'rdpersist CMD'
+<pre><code>Usage: 'rdpersist CMD'
 
 where 'CMD' is one of the following:
   --version to output the version of the script;
