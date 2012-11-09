@@ -1,5 +1,5 @@
 PACKAGE  = rdpersist
-VERSION  = 0.0.1
+VERSION  = $(shell grep SCRIPTVER rdpersist | cut -d'"' -f2)
 ARCHIVE  = $(PACKAGE)-$(VERSION)
 prefix  ?= $(DESTDIR)/usr/local
 TMPDIR   = /tmp

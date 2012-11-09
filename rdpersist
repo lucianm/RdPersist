@@ -1,6 +1,10 @@
 #!/bin/bash
 
-source /etc/rdpersist.conf
+CFGFILE="/etc/rdpersist.conf"
+SCRIPTNAME="${0##*/}"
+SCRIPTVER="0.0.2"
+
+source ${CFGFILE}
 
 fn_eliminate_linebreaks() {
 	echo ${1}
@@ -57,7 +61,7 @@ fn_persist_all() {
 		fi
 
 		# unmount if mounted
-		if [ "$(mount | grep $mountpath)" != "" ]; then
+		if [[ "$1" == "stop" ]] && [[ "$(mount | grep $mountpath)" != "" ]]; then
 			echo "   Unmounting tmpfs from '$mountpath'"
 			umount "$mountpath"
 		fi
@@ -66,14 +70,33 @@ fn_persist_all() {
 
 
 case "${1}" in
-	start)
+	--start)
 		fn_restore_all
 		;;
-	stop)
+	--stop)
+		fn_persist_all stop
+		;;
+	--sync)
 		fn_persist_all
 		;;
+	--version)
+		echo "${SCRIPTNAME}-${SCRIPTVER}"
+		;;
+	--help)
+		echo ""
+		echo "Usage: '${SCRIPTNAME} CMD'"
+		echo ""
+		echo "where 'CMD' is one of the following:"
+		echo "  --version to output the version of the script;"
+		echo "  --start   to start mounting the tmpfs dirs defined in '${CFGFILE}'"
+		echo "            and restore their contents from persistent storage;"
+		echo "  --stop    to store the contents of the mounted tmpfs dirs defined"
+		echo "            in '${CFGFILE}' and then unmount them;"
+		echo "  --sync    to only store to persistent storage and not unmount;"
+		echo "  --help    this output."
+		;;
 	*)
-		echo "Usage: ${0} start|stop"
+		echo "Try '${SCRIPTNAME} --help'"
 		exit 1
 esac
 

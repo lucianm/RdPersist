@@ -1,0 +1,2 @@
+- checking if the mounts are started for the first time, if they are mounted or not, to enhance data integrity
+and accidental data loss.

@@ -37,6 +37,24 @@ Just use the provided Makefile (install, uninstall), for which you can alter the
 environment vars DESTDIR and prefix before calling a Makefile target if you wish.
 
 
+Usage
+-----
+
+This is the output of the CLI help:
+<code>
+Usage: 'rdpersist CMD'
+
+where 'CMD' is one of the following:
+  --version to output the version of the script;
+  --start   to start mounting the tmpfs dirs defined in '/etc/rdpersist.conf'
+            and restore their contents from persistent storage;
+  --stop    to store the contents of the mounted tmpfs dirs defined
+            in '/etc/rdpersist.conf' and then unmount them;
+  --sync    to only store to persistent storage and not unmount;
+  --help    this output.
+</code>
+
+
 History
 -------
 
