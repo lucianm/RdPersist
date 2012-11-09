@@ -41,7 +41,7 @@ Usage
 -----
 
 This is the output of the CLI help:
-<code>
+<pre><code>
 Usage: 'rdpersist CMD'
 
 where 'CMD' is one of the following:
@@ -52,7 +52,7 @@ where 'CMD' is one of the following:
             in '/etc/rdpersist.conf' and then unmount them;
   --sync    to only store to persistent storage and not unmount;
   --help    this output.
-</code>
+</code></pre>
 
 
 History
